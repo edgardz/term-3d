@@ -1,0 +1,10 @@
+@import 'shared';
+
+.root {
+  position: relative;
+  display: flex;
+
+  &.disabled {
+    opacity: 0.2;
+  }
+}

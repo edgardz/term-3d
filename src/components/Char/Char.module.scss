@@ -1,0 +1,13 @@
+@import 'shared';
+
+.root {
+  @include box(px(100));
+  position: relative;
+
+  border: 1px solid;
+  margin: px(10);
+
+  &.active {
+    border: 3px solid;
+  }
+}
