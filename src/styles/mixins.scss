@@ -1,0 +1,314 @@
+/* stylelint-disable indentation */
+// Sass Mixins
+//
+// More information about mixins in:
+// http://sass-lang.com/documentation/file.SASS_REFERENCE.html#mixins
+// Add comment to every function
+@import 'vars';
+
+/// Media queries
+/// @example scss Input
+///   element {
+///     [...phone styles....]
+///     @include media-tablet-portrait {
+///        [...tablet styles...]
+///     }
+///     @include media-desktop {
+///        [...desktop styles...]
+///     }
+///   }
+@mixin media-mobile {
+  @media (max-width: #{$breakpoint-tablet-portrait - 1}px) {
+    @content;
+  }
+}
+
+@mixin media-tablet-portrait {
+  @media (min-width: #{$breakpoint-tablet-portrait}px) {
+    @content;
+  }
+}
+
+@mixin media-tablet-landscape {
+  @media (min-width: #{$breakpoint-tablet-landscape}px) {
+    @content;
+  }
+}
+
+@mixin media-desktop {
+  @media (min-width: #{$breakpoint-desktop}px) {
+    @content;
+  }
+}
+
+@mixin orientation-portrait {
+  @media (orientation: portrait) {
+    @content;
+  }
+}
+
+@mixin orientation-landscape {
+  @media (orientation: landscape) {
+    @content;
+  }
+}
+
+// @mixin media-large {
+//   @media (min-width: #{$breakpoint-large}px) {
+//     @content;
+//   }
+// }
+
+/// Convert the pixels to rem for in a specific resolution, usually 1440px wide
+/// @example scss Input
+///   section {
+///     height: px(200);
+///   }
+@function px($px) {
+  @return $px * 0.1rem;
+}
+
+// Shorthand to use CSS var --vh
+// @example scss Input
+//   section {
+//     height: vh(5);
+//   }
+@function vh($vh) {
+  @return calc(var(--vh) * #{$vh});
+}
+
+/// Improve animation performance for containers
+/// @example scss Input
+///   .card {
+///     @include gpu();
+///   }
+@mixin gpu {
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
+  perspective: 1000px;
+
+  .safari & {
+    perspective: none; // otherwise text and icons become blurry
+  }
+}
+
+/// Set exactly the same width and height of a component, avoid repeat the same dimension
+/// @parameter {Measure unit} $width - Specify width of the box
+/// @parameter {Measure unit} $height [$width] - Specify height of the box, the default value is the width
+/// @example scss Input
+///   .card {
+///     @include box(3.2rem);
+///   }
+///   .card-another {
+///     @include box(3.2rem, 2rem);
+///   }
+@mixin box($width, $height: $width) {
+  width: $width;
+  height: $height;
+}
+
+/// position, top, left, width, height shorthand
+/// @example scss Input
+///   element {
+///     @include rect(absolute, 0, 0, 100%, 100%);
+///   }
+@mixin rect($position: null, $top: null, $left: null, $width: null, $height: null) {
+  @if $position != null {
+    position: $position;
+  }
+
+  @if $top != null {
+    top: $top;
+  }
+
+  @if $left != null {
+    left: $left;
+  }
+
+  @include box($width, $height);
+}
+
+/// opacity and visibility shorthand
+/// @example scss Input
+///   element {
+///     @include auto-alpha(1);
+///   }
+@mixin auto-alpha($value: 1, $time: null, $easing: $ease-out-expo) {
+  opacity: $value;
+  visibility: if($value == 0, hidden, visible);
+
+  @if $time != null {
+    transition: opacity $time $easing, visibility $time $easing;
+  }
+}
+
+/// text-shadow shorthand with defaults
+/// @example scss Input
+///   .title {
+///     @include text-shadow;
+///   }
+@mixin text-shadow($x: 0, $y: 0, $blur: px(20), $color: rgba($black, 0.1)) {
+  text-shadow: $x $y $blur $color;
+}
+
+/// box-shadow shorthand with defaults
+/// @example scss Input
+///   .content {
+///     @include box-shadow;
+///   }
+@mixin box-shadow($x: 0, $y: 0, $blur: px(20), $color: rgba($black, 0.1)) {
+  box-shadow: $x $y $blur $color;
+}
+
+/// Set top and left to 0
+/// @example scss Input
+///   element {
+///     @include position-0;
+///   }
+@mixin position-0($position: null) {
+  @if $position != null {
+    position: $position;
+  }
+  top: 0;
+  left: 0;
+}
+
+/// Set full size of box and position
+/// @parameter {string} $pos - one of relative, absolute, fixed. relative by default
+/// @example scss Input
+///   element {
+///     @include position-100(absolute);
+///   }
+@mixin position-100($position: relative) {
+  @include position-0($position);
+  @include box(100%);
+}
+
+/// Set display flex and center children horizontally and vertically
+/// @example scss Input
+///   element {
+///     @include flex-center;
+///   }
+@mixin flex-center($direction: null) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  @if $direction != null {
+    flex-direction: $direction;
+  }
+}
+
+/// Set display flex and center children vertically
+/// @example scss Input
+///   element {
+///     @include flex-center-vert;
+///   }
+@mixin flex-center-vert {
+  display: flex;
+  align-items: center;
+}
+
+/// Set display flex and center children horizontally
+/// @example scss Input
+///   element {
+///     @include flex-center-horiz;
+///   }
+@mixin flex-center-horiz {
+  display: flex;
+  justify-content: center;
+}
+
+/// Center its element (horizontally and vertically) by using transform
+/// @example scss Input
+///   element {
+///     @include transform-center;
+///   }
+@mixin transform-center($position: null, $extra-transform: null) {
+  @if $position != null {
+    position: $position;
+  }
+  top: 50%;
+  left: 50%;
+  transform: translate3d(-50%, -50%, 0) $extra-transform;
+}
+
+/// Set vertical center of its element
+/// @example scss Input
+///   element {
+///     @include transform-center-vert;
+///   }
+@mixin transform-center-vert($position: null, $extra-transform: null) {
+  @if $position != null {
+    position: $position;
+  }
+  top: 50%;
+  transform: translate3d(0, -50%, 0) $extra-transform;
+}
+
+/// Set horizontal center of its element
+/// @example scss Input
+///   element {
+///     @include transform-center-horiz;
+///   }
+@mixin transform-center-horiz($position: null, $extra-transform: null) {
+  @if $position != null {
+    position: $position;
+  }
+  left: 50%;
+  transform: translate3d(-50%, 0, 0) $extra-transform;
+}
+
+/// Set z-index value in order of $element variable
+/// @example scss Input
+///   element {
+///     @include z-index(modal);
+///   }
+@mixin z-index($id) {
+  $elements: pages, mainnav, modal, banner, nonfunctional, noscript;
+  z-index: index($elements, $id);
+}
+
+// default outline
+// @example scss Input
+//   .content {
+//     @include default-outline;
+//   }
+@mixin default-outline() {
+  outline: 1px dotted #212121;
+  outline: 5px auto -webkit-focus-ring-color;
+}
+
+@mixin checkerboard() {
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        45deg,
+        rgba(0, 0, 0, 0.1) 25%,
+        transparent 25%,
+        transparent 75%,
+        rgba(0, 0, 0, 0.1) 75%,
+        rgba(0, 0, 0, 0.1) 0
+      ),
+      linear-gradient(
+        45deg,
+        rgba(0, 0, 0, 0.1) 25%,
+        transparent 25%,
+        transparent 75%,
+        rgba(0, 0, 0, 0.1) 75%,
+        rgba(0, 0, 0, 0.1) 0
+      ),
+      transparent;
+    background-repeat: repeat, repeat;
+    background-position: 0 0, 10px 10px;
+    background-origin: padding-box, padding-box;
+    background-clip: border-box, border-box;
+    background-size: 20px 20px, 20px 20px;
+    z-index: -100;
+  }
+}

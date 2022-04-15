@@ -1,0 +1,31 @@
+// Variables
+//
+// Add global variables here, color palette, those variables shared by components all applied to global styling
+
+// ====================================================================
+// Breakpoints
+//
+// Window breakpoints
+// ====================================================================
+$breakpoint-tablet-portrait: 768;
+$breakpoint-tablet-landscape: 1024;
+$breakpoint-desktop: 1440;
+// $breakpoint-large: 1920;
+
+// ====================================================================
+// Design width
+//
+// Used to keep px() proportional to designs
+// ====================================================================
+$design-width-mobile: 375;
+$design-width-tablet-portrait: 768;
+$design-width-tablet-landscape: 1024;
+$design-width-desktop: 1440;
+
+// ====================================================================
+// General
+//
+// Global color variables, used usually in sections
+// Global variables used across the web app
+// ====================================================================
+$element-shadow: 0 16px 16px 0 rgba(0, 0, 0, 0.04);

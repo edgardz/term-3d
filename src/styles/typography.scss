@@ -1,0 +1,144 @@
+@use 'sass:math';
+
+$generic-fonts: system-ui, Helvetica, Arial, sans-serif;
+
+/// Check if two scss values are safe to add, subtract, or multiply.
+/// @example scss Input
+///  @if is-compatible($font-size, $line-height) {
+///    @return math.div($line-height, $font-size);
+///  } @else {
+///    @return $line-height;
+///  }
+@function is-compatible($a, $b) {
+  // Check if both values are numbers, for scss values like 3% or 10px count as numbers
+  @if (type-of($a) == 'number' and type-of($b) == 'number') {
+    // Check if they are unitless so we can do transformations
+    @if (math.is-unitless($a) and math.is-unitless($b)) {
+      // Extra check to make sure they are compatible for math.div later on
+      @return math.compatible($a, $b);
+    } @else {
+      @return false;
+    }
+  } @else {
+    @return false;
+  }
+}
+
+// Use two pixel values to convert line-height into a unitless number
+// @example scss Input
+//   p {
+//     font-size: 16px;
+//     line-height: line-height(16, 30);
+//   }
+@function line-height($font-size, $line-height) {
+  @if is-compatible($font-size, $line-height) {
+    @return math.div($line-height, $font-size);
+  } @else {
+    @return $line-height;
+  }
+}
+
+// Use two pixel values to convert letter-spacing into an em value
+// @example scss Input
+//   p {
+//     font-size: 16px;
+//     // letter-spacing: -0.1px;
+//     letter-spacing: letter-spacing(16, -0.1);
+//   }
+@function letter-spacing($font-size, $letter-spacing) {
+  @if is-compatible($font-size, $letter-spacing) {
+    @return #{math.div($letter-spacing, $font-size)}em;
+  } @else {
+    @return $letter-spacing;
+  }
+}
+
+// Define font-size, line-height and letter-spacing in function
+// @example scss Input
+//   p {
+//     // font-size: 16px;
+//     // letter-spacing: -0.1px;
+//     // line-height: 1.5; // This is line-height 24px and font-size: 16px
+//     @include font-size(16, 24, -0.1)
+//   }
+@mixin font-size($font-size, $line-height: null, $letter-spacing: null) {
+  @if math.is-unitless($font-size) {
+    font-size: px($font-size);
+  } @else {
+    font-size: $font-size;
+  }
+
+  line-height: line-height($font-size, $line-height);
+  letter-spacing: letter-spacing($font-size, $letter-spacing);
+}
+
+// Define font-family, font-weight and font-style in function
+// @example scss Input
+//   p {
+//     // font-family: 'Roboto';
+//     // font-weight: 400;
+//     // font-style: italic;
+//     @include font-family('Roboto', 400, italic)
+//   }
+@mixin font-family($font-family: null, $font-weight: null, $font-style: null) {
+  @if $font-family {
+    font-family: $font-family, $generic-fonts;
+  }
+  font-weight: $font-weight;
+  font-style: $font-style;
+}
+
+// Example Typography System
+// TODO: Replace with your project typography system
+@mixin typography-body {
+  @include font-family('Roboto', 500);
+  @include font-size(12, 18, -0.04);
+}
+
+// @mixin typography-h1 {
+//   @include font-family('Roboto', 700);
+//   @include font-size(24, 18, -0.04);
+
+//   @include media-tablet-portrait {
+//     @include font-size(36);
+//   }
+
+//   @include media-tablet-landscape {
+//     @include font-size(48);
+//   }
+// }
+
+// @mixin typography-h2 {
+//   @include font-family('Roboto', 700);
+//   @include font-size(18, 18, -0.04);
+
+//   @include media-tablet-portrait {
+//     @include font-size(20);
+//   }
+
+//   @include media-tablet-landscape {
+//     @include font-size(22);
+//   }
+// }
+
+// @mixin typography-cta() {
+//   @include font-family('Roboto', 700);
+//   @include font-size(16, 16, -0.04);
+//   text-transform: uppercase;
+// }
+
+// @mixin typography-label() {
+//   @include font-family('Roboto', 600);
+//   @include font-size(12, 12, -0.08);
+// }
+
+// @mixin typography-error() {
+//   @include font-family('Roboto', 400);
+//   @include font-size(10, 10, -0.8);
+//   color: $red;
+// }
+
+// @mixin typography-json() {
+//   @include font-size(10, 10, -0.8);
+//   font-family: monospace;
+// }
